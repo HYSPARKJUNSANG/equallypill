@@ -114,6 +114,25 @@
         const searchButton = document.getElementById('search-button');
         const resultsDiv = document.getElementById('results');
 
+        const medicines = [
+            {
+                "제품코드": "001",
+                "제품명": "약품A",
+                "업체명": "제약사A",
+                "규격": "100mg",
+                "단위": "알",
+                "상한금액": "1000원"
+            },
+            {
+                "제품코드": "002",
+                "제품명": "약품B",
+                "업체명": "제약사B",
+                "규격": "200mg",
+                "단위": "알",
+                "상한금액": "2000원"
+            }
+        ];
+
         searchButton.addEventListener('click', search);
         searchInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
@@ -121,46 +140,37 @@
             }
         });
 
-        async function search() {
-            const query = searchInput.value.trim();
+        function search() {
+            const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
                 return;
             }
 
-            try {
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query: query }),
-                });
+            const filteredResults = medicines.filter(medicine => 
+                medicine['제품코드'].toLowerCase().includes(query) || 
+                medicine['제품명'].toLowerCase().includes(query)
+            );
 
-                const data = await response.json();
-                displayResults(data.group, data.results);
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            displayResults(filteredResults);
         }
 
-        function displayResults(group, results) {
+        function displayResults(results) {
             if (results.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
                 return;
             }
 
-            let html = `<h2>Group: ${group}</h2>`;
-            html += '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>규격</th><th>단위</th><th>상한금액</th></tr>';
+            let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>규격</th><th>단위</th><th>상한금액</th></tr>';
             for (const medicine of results) {
                 html += `
                     <tr>
-                        <td>${medicine['제품코드'] || ''}</td>
-                        <td>${medicine['제품명'] || ''}</td>
-                        <td>${medicine['업체명'] || ''}</td>
-                        <td>${medicine['규격'] || ''}</td>
-                        <td>${medicine['단위'] || ''}</td>
-                        <td>${medicine['상한금액'] || ''}</td>
+                        <td>${medicine['제품코드']}</td>
+                        <td>${medicine['제품명']}</td>
+                        <td>${medicine['업체명']}</td>
+                        <td>${medicine['규격']}</td>
+                        <td>${medicine['단위']}</td>
+                        <td>${medicine['상한금액']}</td>
                     </tr>
                 `;
             }
