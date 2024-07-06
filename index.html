@@ -113,34 +113,16 @@
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
         const resultsDiv = document.getElementById('results');
+        let medicines = [];
 
-        // 로컬 JSON 데이터
-        const medicines = [
-            {
-                "제품코드": "001",
-                "제품명": "약품A",
-                "업체명": "제약사A",
-                "규격": "100mg",
-                "단위": "알",
-                "상한금액": "1000원"
-            },
-            {
-                "제품코드": "002",
-                "제품명": "약품B",
-                "업체명": "제약사B",
-                "규격": "200mg",
-                "단위": "알",
-                "상한금액": "2000원"
-            },
-            {
-                "제품코드": "003",
-                "제품명": "두타스테리드",
-                "업체명": "제약사C",
-                "규격": "0.5mg",
-                "단위": "캡슐",
-                "상한금액": "1500원"
-            }
-        ];
+        fetch('data/medicines.json')
+            .then(response => response.json())
+            .then(data => {
+                medicines = data;
+            })
+            .catch(error => {
+                console.error('Error loading JSON data:', error);
+            });
 
         searchButton.addEventListener('click', search);
         searchInput.addEventListener('keypress', function(event) {
