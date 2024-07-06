@@ -155,6 +155,13 @@
         function displayResults(results, query) {
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
             
+            // 강조 표시된 항목을 먼저 정렬
+            results.sort((a, b) => {
+                const aHighlighted = a['제품코드'].toLowerCase().includes(query) || a['제품명'].toLowerCase().includes(query);
+                const bHighlighted = b['제품코드'].toLowerCase().includes(query) || b['제품명'].toLowerCase().includes(query);
+                return bHighlighted - aHighlighted;
+            });
+
             for (const medicine of results) {
                 const isHighlighted = medicine['제품코드'].toLowerCase().includes(query) || 
                                       medicine['제품명'].toLowerCase().includes(query);
@@ -171,7 +178,7 @@
                     <td>${medicine['제품코드']}</td>
                     <td>${medicine['제품명']}</td>
                     <td>${medicine['업체명']}</td>
-                    <td>${medicine['상한금액']}</td>
+                    <td>${medicine['상한금액']}원</td>
                 </tr>
             `;
         }
