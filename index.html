@@ -136,34 +136,29 @@
                 return;
             }
 
-            const exactMatch = medicines.find(medicine => 
-                medicine['제품코드'].toLowerCase() === query || 
-                medicine['제품명'].toLowerCase() === query
+            const matchingMedicines = medicines.filter(medicine => 
+                medicine['제품코드'].toLowerCase().includes(query) || 
+                medicine['제품명'].toLowerCase().includes(query)
             );
 
-            const otherResults = medicines.filter(medicine => 
-                (medicine['제품코드'].toLowerCase().includes(query) || 
-                medicine['제품명'].toLowerCase().includes(query)) &&
-                medicine !== exactMatch
-            );
-
-            displayResults(exactMatch, otherResults);
-        }
-
-        function displayResults(exactMatch, otherResults) {
-            if (!exactMatch && otherResults.length === 0) {
+            if (matchingMedicines.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
                 return;
             }
 
-            let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>단위</th><th>상한금액 (1알)</th></tr>';
-            
-            if (exactMatch) {
-                html += generateTableRow(exactMatch, true);
-            }
+            const groups = [...new Set(matchingMedicines.map(medicine => medicine['Group']))];
+            const results = medicines.filter(medicine => groups.includes(medicine['Group']));
 
-            for (const medicine of otherResults) {
-                html += generateTableRow(medicine, false);
+            displayResults(results, query);
+        }
+
+        function displayResults(results, query) {
+            let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
+            
+            for (const medicine of results) {
+                const isHighlighted = medicine['제품코드'].toLowerCase().includes(query) || 
+                                      medicine['제품명'].toLowerCase().includes(query);
+                html += generateTableRow(medicine, isHighlighted);
             }
 
             html += '</table>';
@@ -176,7 +171,6 @@
                     <td>${medicine['제품코드']}</td>
                     <td>${medicine['제품명']}</td>
                     <td>${medicine['업체명']}</td>
-                    <td>${medicine['단위']}</td>
                     <td>${medicine['상한금액']}</td>
                 </tr>
             `;
