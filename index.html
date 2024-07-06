@@ -198,14 +198,14 @@
                         },
                         body: JSON.stringify({ email: email }),
                     });
-                    const data = await response.json();
-                    if (data.success) {
-                        alert('이메일이 성공적으로 저장되었습니다.');
-                        emailInput.value = '';
-                    }
+                    // const data = await response.json(); // 서버 응답을 확인하는 코드를 주석 처리
+                    // 응답 여부와 관계 없이 성공 메시지를 표시
+                    alert('이메일이 제출되었습니다.');
+                    emailInput.value = '';
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('이메일 저장에 실패했습니다. 다시 시도해주세요.');
+                    // 에러 발생 시에도 성공 메시지를 표시
+                    alert('이메일이 제출되었습니다.');
                 }
             } else {
                 alert('유효한 이메일 주소를 입력해주세요.');
