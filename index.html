@@ -105,7 +105,108 @@
     </div>
 
     <script>
-        // 기존 JavaScript 코드 유지
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const resultsDiv = document.getElementById('results');
+        let medicines = [];
+
+        fetch('data/medicines.json')
+            .then(response => response.json())
+            .then(data => {
+                medicines = data;
+            })
+            .catch(error => {
+                console.error('Error loading JSON data:', error);
+            });
+
+        searchButton.addEventListener('click', search);
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                search();
+            }
+        });
+
+        function search() {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length === 0) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const filteredResults = medicines.filter(medicine => 
+                medicine['제품코드'].toLowerCase().includes(query) || 
+                medicine['제품명'].toLowerCase().includes(query)
+            );
+
+            displayResults(filteredResults);
+        }
+
+        function displayResults(results) {
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
+                return;
+            }
+
+            let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>규격</th><th>단위</th><th>상한금액</th></tr>';
+            for (const medicine of results) {
+                html += `
+                    <tr>
+                        <td>${medicine['제품코드']}</td>
+                        <td>${medicine['제품명']}</td>
+                        <td>${medicine['업체명']}</td>
+                        <td>${medicine['규격']}</td>
+                        <td>${medicine['단위']}</td>
+                        <td>${medicine['상한금액']}</td>
+                    </tr>
+                `;
+            }
+            html += '</table>';
+            resultsDiv.innerHTML = html;
+        }
+
+        // 이메일 제출 기능
+        const emailInput = document.getElementById('email-input');
+        const emailSubmit = document.getElementById('email-submit');
+
+        emailSubmit.addEventListener('click', async function() {
+            const email = emailInput.value.trim();
+            if (email) {
+                try {
+                    const response = await fetch('/save_email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: email }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('이메일이 성공적으로 저장되었습니다.');
+                        emailInput.value = '';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('이메일 저장에 실패했습니다. 다시 시도해주세요.');
+                }
+            } else {
+                alert('유효한 이메일 주소를 입력해주세요.');
+            }
+        });
+
+        // Google Analytics 이벤트 추적
+        searchButton.addEventListener('click', function() {
+            gtag('event', 'search', {
+                'event_category': 'engagement',
+                'event_label': 'search_button_click'
+            });
+        });
+
+        emailSubmit.addEventListener('click', function() {
+            gtag('event', 'email_submit', {
+                'event_category': 'engagement',
+                'event_label': 'email_submit_click'
+            });
+        });
     </script>
 </body>
 </html>
