@@ -24,6 +24,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
+            position: relative;
         }
         h1 {
             font-size: 2rem;
@@ -82,8 +83,8 @@
             position: absolute;
             border: 1px solid #d4d4d4;
             border-top: none;
-            z-index: 99;
-            top: 100%;
+            z-index: 1;
+            top: calc(100% + 1rem); /* Adjusted to avoid overlap with search button */
             left: 0;
             right: 0;
             max-height: 150px;
@@ -136,7 +137,8 @@
         <div class="search-section">
             <h1 id="title">똑같은 약 싸게 사자 쌍둥이약 !</h1>
             <p id="info-text" class="info-text">
-                의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)
+                의약품을 검색해보세요!<br>
+                같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)
             </p>
             <div style="position: relative;">
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
@@ -177,7 +179,7 @@
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
-            infoText.innerHTML = '의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)';
+            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)';
             if (chart) {
                 chart.destroy();
                 chart = null;
@@ -188,7 +190,7 @@
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
-                infoText.innerHTML = '의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)';
+                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
 
