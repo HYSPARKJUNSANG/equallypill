@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>똑같은 약 싸게 사자</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
     <style>
         body {
             font-family: 'Pretendard', Arial, sans-serif;
@@ -25,14 +29,14 @@
             margin-bottom: 1rem;
         }
         h1 {
-            font-size: 2rem; /* 폰트 크기를 2rem으로 변경 */
+            font-size: 2rem;
             margin-bottom: 1rem;
         }
         .info-text {
-            font-size: 1.2rem; /* 폰트 크기를 1.2rem으로 변경 */
+            font-size: 1.2rem;
             color: #555;
             margin-bottom: 1rem;
-            line-height: 1.6; /* 줄 간격을 높여 가독성 향상 */
+            line-height: 1.6;
         }
         #search-input, #email-input {
             width: 100%;
@@ -44,7 +48,7 @@
         #search-button, #email-submit {
             width: 100%;
             padding: 0.5rem;
-            font-size: 1.2rem; /* 폰트 크기를 1.2rem으로 변경 */
+            font-size: 1.2rem;
             margin-bottom: 1rem;
             box-sizing: border-box;
             background-color: #4CAF50;
@@ -68,11 +72,12 @@
             background-color: #f2f2f2;
         }
         .highlighted-row {
-            background-color: #e6f7ff;  /* 연한 파란색 */
+            background-color: #e6f7ff;
         }
         @media (min-width: 768px) {
             .container {
                 display: flex;
+                flex-direction: row;
                 gap: 1rem;
             }
             .search-section {
@@ -80,6 +85,27 @@
             }
             .email-section {
                 flex: 1;
+            }
+        }
+        @media (max-width: 767px) {
+            .container {
+                padding: 0.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .info-text {
+                font-size: 1rem;
+            }
+            #search-input, #email-input, #search-button, #email-submit {
+                font-size: 1rem;
+                padding: 0.7rem;
+            }
+            table {
+                font-size: 0.9rem;
+            }
+            th, td {
+                padding: 6px;
             }
         }
     </style>
@@ -114,7 +140,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="text/babel">
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
         const resultsDiv = document.getElementById('results');
@@ -162,7 +188,6 @@
         function displayResults(results, query) {
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
             
-            // 강조 표시된 항목을 먼저 정렬
             results.sort((a, b) => {
                 const aHighlighted = a['제품코드'].toLowerCase().includes(query) || a['제품명'].toLowerCase().includes(query);
                 const bHighlighted = b['제품코드'].toLowerCase().includes(query) || b['제품명'].toLowerCase().includes(query);
@@ -176,7 +201,10 @@
             }
 
             html += '</table>';
+            html += '<div id="chart-container"></div>';
             resultsDiv.innerHTML = html;
+
+            renderChart(results);
         }
 
         function generateTableRow(medicine, isHighlighted) {
@@ -205,17 +233,13 @@
                         },
                         body: JSON.stringify({ email: email }),
                     });
-                    // const data = await response.json(); // 서버 응답을 확인하는 코드를 주석 처리
-                    // 응답 여부와 관계 없이 성공 메시지를 표시
                     alert('이메일이 제출되었습니다.');
                     emailInput.value = '';
                 } catch (error) {
                     console.error('Error:', error);
-                    // 에러 발생 시에도 성공 메시지를 표시
                     alert('이메일이 제출되었습니다.');
                 }
 
-                // Google Analytics 이벤트 추적
                 gtag('event', 'email_submit', {
                     'event_category': 'engagement',
                     'event_label': 'email_submit_click'
@@ -225,13 +249,98 @@
             }
         });
 
-        // Google Analytics 이벤트 추적
         searchButton.addEventListener('click', function() {
             gtag('event', 'search', {
                 'event_category': 'engagement',
                 'event_label': 'search_button_click'
             });
         });
+
+        // Autocomplete feature
+        function addAutocomplete() {
+            const autocompleteResults = document.createElement('div');
+            autocompleteResults.id = 'autocomplete-results';
+            autocompleteResults.style.cssText = `
+                position: absolute;
+                border: 1px solid #d4d4d4;
+                border-bottom: none;
+                border-top: none;
+                z-index: 99;
+                top: 100%;
+                left: 0;
+                right: 0;
+                max-height: 150px;
+                overflow-y: auto;
+                display: none;
+            `;
+            searchInput.parentNode.style.position = 'relative';
+            searchInput.parentNode.appendChild(autocompleteResults);
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (query.length < 2) {
+                    autocompleteResults.style.display = 'none';
+                    return;
+                }
+
+                const matches = medicines.filter(medicine => 
+                    medicine['제품명'].toLowerCase().includes(query) ||
+                    medicine['제품코드'].toLowerCase().includes(query)
+                ).slice(0, 5);  // Limit to 5 results
+
+                if (matches.length > 0) {
+                    autocompleteResults.innerHTML = matches.map(medicine => 
+                        `<div class="autocomplete-item">${medicine['제품명']}</div>`
+                    ).join('');
+                    autocompleteResults.style.display = 'block';
+                } else {
+                    autocompleteResults.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('autocomplete-item')) {
+                    searchInput.value = e.target.textContent;
+                    autocompleteResults.style.display = 'none';
+                    search();
+                } else if (e.target !== searchInput) {
+                    autocompleteResults.style.display = 'none';
+                }
+            });
+        }
+
+        addAutocomplete();
+
+        // Price Comparison Chart Component
+        const PriceComparisonChart = ({ data }) => {
+            const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
+            
+            const chartData = data.map(item => ({
+                name: item['제품명'].length > 10 ? item['제품명'].substring(0, 10) + '...' : item['제품명'],
+                price: parseFloat(item['상한금액'])
+            }));
+
+            return (
+                <div style={{ width: '100%', height: 300, marginTop: '20px' }}>
+                    <ResponsiveContainer>
+                        <BarChart data={chartData}>
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="price" fill="#82ca9d" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            );
+        };
+
+        // Function to render the chart
+        function renderChart(data) {
+            ReactDOM.render(
+                <PriceComparisonChart data={data} />,
+                document.getElementById('chart-container')
+            );
+        }
     </script>
 </body>
 </html>
