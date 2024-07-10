@@ -139,7 +139,7 @@
 <body>
     <div class="container">
         <div class="search-section">
-            <h1 id="title">똑같은 약 싸게 사자 쌍둥이약 !</h1>
+            <h1 id="title">똑같은 약 싸게 사자 "쌍둥이약"</h1>
             <p id="info-text" class="info-text">
                 의약품을 검색해보세요!<br>
                 같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)
@@ -271,20 +271,14 @@
                 return;
             }
 
-            const groupMatches = medicines.filter(medicine => 
-                medicine['Group'].toLowerCase().includes(query)
-            ).slice(0, 5);
-
-            const productMatches = medicines.filter(medicine => 
+            const matches = medicines.filter(medicine => 
                 medicine['제품명'].toLowerCase().includes(query) ||
                 medicine['제품코드'].toLowerCase().includes(query)
-            ).slice(0, 5);
-
-            const matches = [...groupMatches, ...productMatches].slice(0, 5);
+            ).slice(0, 5);  // Limit to 5 results
 
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => 
-                    `<div class="autocomplete-item">${medicine['제품명']} (${medicine['Group']})</div>`
+                    `<div class="autocomplete-item">${medicine['제품명']}</div>`
                 ).join('');
             } else {
                 autocompleteResults.innerHTML = '';
@@ -293,7 +287,7 @@
 
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('autocomplete-item')) {
-                searchInput.value = e.target.textContent.split(' (')[0]; // Set input to '제품명'
+                searchInput.value = e.target.textContent;
                 autocompleteResults.innerHTML = '';
                 search();
             } else if (e.target !== searchInput) {
