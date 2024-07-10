@@ -37,23 +37,24 @@
             margin-bottom: 1rem;
             line-height: 1.6;
         }
+        .search-container {
+            display: flex;
+            gap: 0.5rem;
+        }
         #search-input {
-            width: 100%;
+            flex-grow: 1;
             padding: 0.5rem;
             font-size: 1rem;
-            margin-bottom: 1rem;
             box-sizing: border-box;
         }
         #search-button {
-            width: 100%;
             padding: 0.5rem;
             font-size: 1.2rem;
-            margin-bottom: 1rem;
-            box-sizing: border-box;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            flex-shrink: 0;
         }
         #results {
             overflow-x: auto;
@@ -84,7 +85,7 @@
             border: 1px solid #d4d4d4;
             border-top: none;
             z-index: 1;
-            top: calc(100% + 1rem); /* Adjusted to avoid overlap with search button */
+            top: 100%;
             left: 0;
             right: 0;
             max-height: 150px;
@@ -109,6 +110,9 @@
             }
             .info-text {
                 font-size: 1rem;
+            }
+            .search-container {
+                flex-direction: column;
             }
             #search-input, #search-button {
                 font-size: 1rem;
@@ -135,16 +139,16 @@
 <body>
     <div class="container">
         <div class="search-section">
-            <h1 id="title">똑같은 약 싸게 사자 쌍둥이약 !</h1>
+            <h1 id="title">똑같은 약 싸게 사자 "쌍둥이약"</h1>
             <p id="info-text" class="info-text">
                 의약품을 검색해보세요!<br>
-                같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)
+                같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)
             </p>
-            <div style="position: relative;">
+            <div class="search-container" style="position: relative;">
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
+                <button id="search-button">검색</button>
                 <div id="autocomplete-results"></div>
             </div>
-            <button id="search-button">검색</button>
             <div id="results"></div>
             <canvas id="priceChart"></canvas>
         </div>
@@ -179,7 +183,7 @@
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
-            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)';
+            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
             if (chart) {
                 chart.destroy();
                 chart = null;
@@ -190,7 +194,7 @@
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
-                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red;">비싸게</span> 사고 있는 경우가 많답니다 :)';
+                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
 
