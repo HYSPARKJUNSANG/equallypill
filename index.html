@@ -222,13 +222,21 @@
 
         function generateTableRow(medicine, isHighlighted) {
             return `
-                <tr class="${isHighlighted ? 'highlighted-row' : ''}">
+                <tr class="${isHighlighted ? 'highlighted-row' : ''}" onclick="handleRowClick('${medicine['제품명']}')">
                     <td>${medicine['제품코드']}</td>
                     <td>${medicine['제품명']}</td>
                     <td>${medicine['업체명']}</td>
                     <td>${medicine['상한금액']}원</td>
                 </tr>
             `;
+        }
+
+        function handleRowClick(productName) {
+            const searchQuery = productName.split('_')[0];
+            const userConfirmed = confirm('외부 사이트로 이동합니다. 계속하시겠습니까?');
+            if (userConfirmed) {
+                window.location.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`;
+            }
         }
 
         searchButton.addEventListener('click', function() {
