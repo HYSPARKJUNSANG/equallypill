@@ -71,6 +71,10 @@
         }
         .highlighted-row {
             background-color: #e6f7ff;
+            cursor: pointer;
+        }
+        .highlighted-row:hover {
+            background-color: #d1e7ff;
         }
         #autocomplete-results {
             position: absolute;
@@ -130,7 +134,8 @@
         <div class="search-section">
             <h1 id="title">똑같은 약 싸게 사자 쌍둥이약 !</h1>
             <p class="info-text">
-                의약품 검색 후, 처방 가능한지 <strong>약사님에게 문의 후 처방받으면 됩니다.</strong>
+                의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>
+                해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.
             </p>
             <div style="position: relative;">
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
@@ -233,7 +238,7 @@
 
         function handleRowClick(productName) {
             const searchQuery = productName.split('_')[0];
-            const userConfirmed = confirm('외부 사이트로 이동합니다. 계속하시겠습니까?');
+            const userConfirmed = confirm('의약품 정보 사이트로 이동합니다. 계속 하시겠습니까?');
             if (userConfirmed) {
                 window.location.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`;
             }
@@ -257,7 +262,7 @@
             const matches = medicines.filter(medicine => 
                 medicine['제품명'].toLowerCase().includes(query) ||
                 medicine['제품코드'].toLowerCase().includes(query)
-            ).slice(0, 5);  // Limit to 5 results
+            ).slice(0, 10);  // Limit to 5 results
 
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => 
