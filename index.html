@@ -69,12 +69,14 @@
         th {
             background-color: #f2f2f2;
         }
-        .highlighted-row {
-            background-color: #e6f7ff;
+        tr {
             cursor: pointer;
         }
-        .highlighted-row:hover {
+        tr:hover {
             background-color: #d1e7ff;
+        }
+        .highlighted-row {
+            background-color: #e6f7ff;
         }
         #autocomplete-results {
             position: absolute;
@@ -133,9 +135,8 @@
     <div class="container">
         <div class="search-section">
             <h1 id="title">똑같은 약 싸게 사자 쌍둥이약 !</h1>
-            <p class="info-text">
-                의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>
-                해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.
+            <p id="info-text" class="info-text">
+                의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)
             </p>
             <div style="position: relative;">
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
@@ -153,6 +154,7 @@
         const resultsDiv = document.getElementById('results');
         const autocompleteResults = document.getElementById('autocomplete-results');
         const titleElement = document.getElementById('title');
+        const infoText = document.getElementById('info-text');
         let medicines = [];
         let chart = null;
 
@@ -175,6 +177,7 @@
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
+            infoText.innerHTML = '의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)';
             if (chart) {
                 chart.destroy();
                 chart = null;
@@ -185,6 +188,7 @@
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
+                infoText.innerHTML = '의약품을 검색해보세요! 같은 약인데 비싸게 사고 있는 경우가 많답니다 :)';
                 return;
             }
 
@@ -195,6 +199,7 @@
 
             if (matchingMedicines.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
+                infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
                 return;
             }
 
@@ -221,6 +226,7 @@
 
             html += '</table>';
             resultsDiv.innerHTML = html;
+            infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
 
             renderChart(results);
         }
@@ -262,7 +268,7 @@
             const matches = medicines.filter(medicine => 
                 medicine['제품명'].toLowerCase().includes(query) ||
                 medicine['제품코드'].toLowerCase().includes(query)
-            ).slice(0, 10);  // Limit to 5 results
+            ).slice(0, 5);  // Limit to 5 results
 
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => 
