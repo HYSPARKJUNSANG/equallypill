@@ -200,7 +200,8 @@
 
             const matchingMedicines = medicines.filter(medicine => 
                 medicine['제품코드'].toLowerCase().includes(query) || 
-                medicine['제품명'].toLowerCase().includes(query)
+                medicine['제품명'].toLowerCase().includes(query) ||
+                extractIngredient(medicine['제품명']).includes(query)
             );
 
             if (matchingMedicines.length === 0) {
@@ -219,14 +220,19 @@
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
             
             results.sort((a, b) => {
-                const aHighlighted = a['제품코드'].toLowerCase().includes(query) || a['제품명'].toLowerCase().includes(query);
-                const bHighlighted = b['제품코드'].toLowerCase().includes(query) || b['제품명'].toLowerCase().includes(query);
+                const aHighlighted = a['제품코드'].toLowerCase().includes(query) || 
+                                     a['제품명'].toLowerCase().includes(query) ||
+                                     extractIngredient(a['제품명']).includes(query);
+                const bHighlighted = b['제품코드'].toLowerCase().includes(query) || 
+                                     b['제품명'].toLowerCase().includes(query) ||
+                                     extractIngredient(b['제품명']).includes(query);
                 return bHighlighted - aHighlighted;
             });
 
             for (const medicine of results) {
                 const isHighlighted = medicine['제품코드'].toLowerCase().includes(query) || 
-                                      medicine['제품명'].toLowerCase().includes(query);
+                                      medicine['제품명'].toLowerCase().includes(query) ||
+                                      extractIngredient(medicine['제품명']).includes(query);
                 html += generateTableRow(medicine, isHighlighted);
             }
 
@@ -263,7 +269,11 @@
             });
         });
 
-        // Autocomplete feature
+        function extractIngredient(productName) {
+            const match = productName.match(/\(([^)]+)\)/);
+            return match ? match[1].toLowerCase() : '';
+        }
+
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             if (query.length < 2) {
@@ -271,15 +281,29 @@
                 return;
             }
 
-            const matches = medicines.filter(medicine => 
-                medicine['제품명'].toLowerCase().includes(query) ||
-                medicine['제품코드'].toLowerCase().includes(query)
-            ).slice(0, 5);  // Limit to 5 results
+            const matches = medicines.filter(medicine => {
+                const ingredient = extractIngredient(medicine['제품명']);
+                return ingredient.includes(query) ||
+                       medicine['제품명'].toLowerCase().includes(query) ||
+                       medicine['제품코드'].toLowerCase().includes(query);
+            }).sort((a, b) => {
+                const aIngredient = extractIngredient(a['제품명']);
+                const bIngredient = extractIngredient(b['제품명']);
+                const aMatch = aIngredient.includes(query);
+                const bMatch = bIngredient.includes(query);
+                if (aMatch && !bMatch) return -1;
+                if (!aMatch && bMatch) return 1;
+                return 0;
+            }).slice(0, 5);  // Limit to 5 results
 
             if (matches.length > 0) {
-                autocompleteResults.innerHTML = matches.map(medicine => 
-                    `<div class="autocomplete-item">${medicine['제품명']}</div>`
-                ).join('');
+                autocompleteResults.innerHTML = matches.map(medicine => {
+                    const ingredient = extractIngredient(medicine['제품명']);
+                    const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
+                        `(<span style="font-weight: bold;">${p1}</span>)`
+                    );
+                    return `<div class="autocomplete-item">${highlightedName}</div>`;
+                }).join('');
             } else {
                 autocompleteResults.innerHTML = '';
             }
@@ -295,7 +319,6 @@
             }
         });
 
-        // Chart rendering function
         function renderChart(data) {
             if (chart) {
                 chart.destroy();
