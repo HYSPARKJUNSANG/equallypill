@@ -101,6 +101,10 @@
         .autocomplete-item:hover {
             background-color: #e9e9e9;
         }
+        .ingredient {
+            font-weight: bold;
+            color: #4CAF50;
+        }
         @media (max-width: 767px) {
             .container {
                 padding: 0.5rem;
@@ -299,10 +303,15 @@
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => {
                     const ingredient = extractIngredient(medicine['제품명']);
-                    const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
-                        `(<span style="font-weight: bold;">${p1}</span>)`
-                    );
-                    return `<div class="autocomplete-item">${highlightedName}</div>`;
+                    let displayText = medicine['제품명'];
+                    if (ingredient.includes(query)) {
+                        displayText = `<span class="ingredient">${ingredient}</span> (${medicine['제품명']})`;
+                    } else {
+                        displayText = displayText.replace(/\(([^)]+)\)/, (match, p1) => 
+                            `(<span class="ingredient">${p1}</span>)`
+                        );
+                    }
+                    return `<div class="autocomplete-item" data-product-name="${medicine['제품명']}">${displayText}</div>`;
                 }).join('');
             } else {
                 autocompleteResults.innerHTML = '';
@@ -311,7 +320,8 @@
 
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('autocomplete-item')) {
-                searchInput.value = e.target.textContent;
+                const productName = e.target.getAttribute('data-product-name');
+                searchInput.value = productName;
                 autocompleteResults.innerHTML = '';
                 search();
             } else if (e.target !== searchInput) {
