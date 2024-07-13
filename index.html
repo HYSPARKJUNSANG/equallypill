@@ -13,18 +13,41 @@
             padding: 0;
             background-color: #f0f0f0;
         }
+        .header {
+            background-color: #f8f8f8;
+            padding: 1rem 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .header-content a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 20px;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 1rem;
         }
         .search-section {
-            background-color: white;
-            padding: 1rem;
+            background-color: #0066cc;
+            padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
             position: relative;
+            color: white;
         }
         h1 {
             font-size: 2rem;
@@ -33,7 +56,7 @@
         }
         .info-text {
             font-size: 1.2rem;
-            color: #555;
+            color: #f0f0f0;
             margin-bottom: 1rem;
             line-height: 1.6;
         }
@@ -58,6 +81,10 @@
         }
         #results {
             overflow-x: auto;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
         }
         table {
             width: 100%;
@@ -140,12 +167,24 @@
     </script>
 </head>
 <body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">쌍둥이약</div>
+            <nav>
+                <a href="#">홈</a>
+                <a href="#">앱 다운로드</a>
+                <a href="#">사용법</a>
+                <a href="#">Contact</a>
+                <a href="#">문의하기</a>
+            </nav>
+        </div>
+    </header>
     <div class="container">
         <div class="search-section">
             <h1 id="title">똑같은 약 싸게 사자 "쌍둥이약"</h1>
             <p id="info-text" class="info-text">
                 의약품을 검색해보세요!<br>
-                같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)
+                같은 약인데 <span style="color: #ffff00; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)
             </p>
             <div class="search-container" style="position: relative;">
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
@@ -182,7 +221,7 @@
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
-            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
+            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: #ffff00; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
             if (chart) {
                 chart.destroy();
                 chart = null;
@@ -192,7 +231,7 @@
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
-                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
+                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: #ffff00; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
             const matchingMedicines = medicines.filter(medicine => 
@@ -285,16 +324,7 @@
                     const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
                         `(<span style="font-weight: bold;">${p1}</span>)`
                     );
-                    return `<div class="autocomplete-item">${highlightedName}</div>`;
-                    let displayText = medicine['제품명'];
-                    if (ingredient.includes(query)) {
-                        displayText = `<span class="ingredient">${ingredient}</span> (${medicine['제품명']})`;
-                    } else {
-                        displayText = displayText.replace(/\(([^)]+)\)/, (match, p1) => 
-                            `(<span class="ingredient">${p1}</span>)`
-                        );
-                    }
-                    return `<div class="autocomplete-item" data-product-name="${medicine['제품명']}">${displayText}</div>`;
+                    return `<div class="autocomplete-item" data-product-name="${medicine['제품명']}">${highlightedName}</div>`;
                 }).join('');
             } else {
                 autocompleteResults.innerHTML = '';
@@ -303,7 +333,6 @@
 
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('autocomplete-item')) {
-                searchInput.value = e.target.textContent;
                 const productName = e.target.getAttribute('data-product-name');
                 searchInput.value = productName;
                 autocompleteResults.innerHTML = '';
@@ -316,37 +345,4 @@
             if (chart) {
                 chart.destroy();
             }
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            const chartData = data.map(item => ({
-                label: item['제품명'].length > 10 ? item['제품명'].substring(0, 10) + '...' : item['제품명'],
-                price: parseFloat(item['상한금액'])
-            }));
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(item => item.label),
-                    datasets: [{
-                        label: '상한금액 (원)',
-                        data: chartData.map(item => item.price),
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '상한금액 (원)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            const
