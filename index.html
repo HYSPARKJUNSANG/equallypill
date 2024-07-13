@@ -101,10 +101,6 @@
         .autocomplete-item:hover {
             background-color: #e9e9e9;
         }
-        .ingredient {
-            font-weight: bold;
-            color: #4CAF50;
-        }
         @media (max-width: 767px) {
             .container {
                 padding: 0.5rem;
@@ -195,11 +191,14 @@
                 infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
+
             const matchingMedicines = medicines.filter(medicine => 
                 medicine['제품코드'].toLowerCase().includes(query) || 
+                medicine['제품명'].toLowerCase().includes(query)
                 medicine['제품명'].toLowerCase().includes(query) ||
                 extractIngredient(medicine['제품명']).includes(query)
             );
+
             if (matchingMedicines.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
                 infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
@@ -211,8 +210,10 @@
         }
         function displayResults(results, query) {
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
-            
+
             results.sort((a, b) => {
+                const aHighlighted = a['제품코드'].toLowerCase().includes(query) || a['제품명'].toLowerCase().includes(query);
+                const bHighlighted = b['제품코드'].toLowerCase().includes(query) || b['제품명'].toLowerCase().includes(query);
                 const aHighlighted = a['제품코드'].toLowerCase().includes(query) || 
                                      a['제품명'].toLowerCase().includes(query) ||
                                      extractIngredient(a['제품명']).includes(query);
@@ -221,12 +222,15 @@
                                      extractIngredient(b['제품명']).includes(query);
                 return bHighlighted - aHighlighted;
             });
+
             for (const medicine of results) {
                 const isHighlighted = medicine['제품코드'].toLowerCase().includes(query) || 
+                                      medicine['제품명'].toLowerCase().includes(query);
                                       medicine['제품명'].toLowerCase().includes(query) ||
                                       extractIngredient(medicine['제품명']).includes(query);
                 html += generateTableRow(medicine, isHighlighted);
             }
+
             html += '</table>';
             resultsDiv.innerHTML = html;
             infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
@@ -255,16 +259,24 @@
                 'event_label': 'search_button_click'
             });
         });
+
+        // Autocomplete feature
         function extractIngredient(productName) {
             const match = productName.match(/\(([^)]+)\)/);
             return match ? match[1].toLowerCase() : '';
         }
+
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             if (query.length < 2) {
                 autocompleteResults.innerHTML = '';
                 return;
             }
+
+            const matches = medicines.filter(medicine => 
+                medicine['제품명'].toLowerCase().includes(query) ||
+                medicine['제품코드'].toLowerCase().includes(query)
+            ).slice(0, 5);  // Limit to 5 results
             const matches = medicines.filter(medicine => {
                 const ingredient = extractIngredient(medicine['제품명']);
                 return ingredient.includes(query) ||
@@ -279,39 +291,33 @@
                 if (!aMatch && bMatch) return 1;
                 return 0;
             }).slice(0, 5);  // Limit to 5 results
+
             if (matches.length > 0) {
+                autocompleteResults.innerHTML = matches.map(medicine => 
+                    `<div class="autocomplete-item">${medicine['제품명']}</div>`
+                ).join('');
                 autocompleteResults.innerHTML = matches.map(medicine => {
                     const ingredient = extractIngredient(medicine['제품명']);
                     const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
                         `(<span style="font-weight: bold;">${p1}</span>)`
                     );
                     return `<div class="autocomplete-item">${highlightedName}</div>`;
-                    let displayText = medicine['제품명'];
-                    if (ingredient.includes(query)) {
-                        displayText = `<span class="ingredient">${ingredient}</span> (${medicine['제품명']})`;
-                    } else {
-                        displayText = displayText.replace(/\(([^)]+)\)/, (match, p1) => 
-                            `(<span class="ingredient">${p1}</span>)`
-                        );
-                    }
-                    return `<div class="autocomplete-item" data-product-name="${medicine['제품명']}">${displayText}</div>`;
                 }).join('');
             } else {
                 autocompleteResults.innerHTML = '';
             }
         });
-
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('autocomplete-item')) {
                 searchInput.value = e.target.textContent;
-                const productName = e.target.getAttribute('data-product-name');
-                searchInput.value = productName;
                 autocompleteResults.innerHTML = '';
                 search();
             } else if (e.target !== searchInput) {
                 autocompleteResults.innerHTML = '';
             }
         });
+
+        // Chart rendering function
         function renderChart(data) {
             if (chart) {
                 chart.destroy();
