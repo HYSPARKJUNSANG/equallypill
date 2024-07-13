@@ -248,12 +248,10 @@
         const searchButton = document.getElementById('search-button');
         const resultsDiv = document.getElementById('results');
         const autocompleteResults = document.getElementById('autocomplete-results');
-        const titleElement = document.getElementById('title');
-        const infoText = document.getElementById('info-text');
         let medicines = [];
         let chart = null;
 
-        fetch('data/medicines.json')
+        fetch('https://https://equallypill.github.io/equallypillbeta/path/to/data/medicines.json')
             .then(response => response.json())
             .then(data => {
                 medicines = data;
@@ -269,21 +267,10 @@
             }
         });
 
-        titleElement.addEventListener('click', function() {
-            searchInput.value = '';
-            resultsDiv.innerHTML = '';
-            infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
-            if (chart) {
-                chart.destroy();
-                chart = null;
-            }
-        });
-
         function search() {
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
                 resultsDiv.innerHTML = '';
-                infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
 
@@ -295,7 +282,6 @@
 
             if (matchingMedicines.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
-                infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
                 return;
             }
 
@@ -327,14 +313,11 @@
 
             html += '</table>';
             resultsDiv.innerHTML = html;
-            infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
-
-            renderChart(results);
         }
 
         function generateTableRow(medicine, isHighlighted) {
             return `
-                <tr class="${isHighlighted ? 'highlighted-row' : ''}" onclick="handleRowClick('${medicine['제품명']}')">
+                <tr class="${isHighlighted ? 'highlighted-row' : ''}">
                     <td>${medicine['제품코드']}</td>
                     <td>${medicine['제품명']}</td>
                     <td>${medicine['업체명']}</td>
@@ -342,21 +325,6 @@
                 </tr>
             `;
         }
-
-        function handleRowClick(productName) {
-            const searchQuery = productName.split('_')[0];
-            const userConfirmed = confirm('의약품 정보 사이트로 이동합니다. 계속 하시겠습니까?');
-            if (userConfirmed) {
-                window.location.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`;
-            }
-        }
-
-        searchButton.addEventListener('click', function() {
-            gtag('event', 'search', {
-                'event_category': 'engagement',
-                'event_label': 'search_button_click'
-            });
-        });
 
         function extractIngredient(productName) {
             const match = productName.match(/\(([^)]+)\)/);
@@ -383,7 +351,7 @@
                 if (aMatch && !bMatch) return -1;
                 if (!aMatch && bMatch) return 1;
                 return 0;
-            }).slice(0, 5);  // Limit to 5 results
+            }).slice(0, 5);
 
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => {
@@ -413,44 +381,6 @@
                 autocompleteResults.innerHTML = '';
             }
         });
-
-        function renderChart(data) {
-            if (chart) {
-                chart.destroy();
-            }
-
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            const chartData = data.map(item => ({
-                label: item['제품명'].length > 10 ? item['제품명'].substring(0, 10) + '...' : item['제품명'],
-                price: parseFloat(item['상한금액'])
-            }));
-
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(item => item.label),
-                    datasets: [{
-                        label: '상한금액 (원)',
-                        data: chartData.map(item => item.price),
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '상한금액 (원)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
