@@ -1,27 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>똑같은 약 싸게 사자</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>똑같은 약 싸게 사자 "쌍둥이약"</title>
     <style>
         body {
             font-family: 'Pretendard', Arial, sans-serif;
-        body, html {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f0f0;
-            background-color: #f8f9fa;
-            color: #333;
         }
         .container {
             max-width: 800px;
-            max-width: 1200px;
             margin: 0 auto;
             padding: 1rem;
-            padding: 0 20px;
         }
         .search-section {
             background-color: white;
@@ -30,45 +25,27 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
             position: relative;
-        .header {
-            background-color: #0066cc;
-            color: #fff;
-            padding: 20px 0;
         }
         h1 {
             font-size: 2rem;
             margin-bottom: 1rem;
             cursor: pointer;
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .info-text {
             font-size: 1.2rem;
             color: #555;
             margin-bottom: 1rem;
             line-height: 1.6;
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
         }
         .search-container {
-        .menu {
             display: flex;
             gap: 0.5rem;
-            gap: 20px;
         }
         #search-input {
             flex-grow: 1;
             padding: 0.5rem;
             font-size: 1rem;
             box-sizing: border-box;
-        .menu a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 14px;
         }
         #search-button {
             padding: 0.5rem;
@@ -78,76 +55,30 @@
             border: none;
             cursor: pointer;
             flex-shrink: 0;
-        .search-section {
-            background-color: #0066cc;
-            color: #fff;
-            padding: 60px 0;
-            text-align: center;
-        }
-        #title {
-            font-size: 36px;
-            margin-bottom: 20px;
         }
         #results {
             overflow-x: auto;
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
         }
         table {
-        .search-input {
             width: 100%;
             border-collapse: collapse;
-            padding: 15px;
-            font-size: 18px;
-            border: none;
-            border-radius: 4px;
-            outline: none;
         }
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
-        .search-button {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            background-color: #ff6600;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
         }
         th {
             background-color: #f2f2f2;
-        .search-button:hover {
-            background-color: #e65c00;
         }
         tr {
             cursor: pointer;
-        #autocomplete-results, #results {
-            margin-top: 20px;
-            color: #fff;
-            text-align: left;
         }
         tr:hover {
             background-color: #d1e7ff;
-        .pharmacy-list {
-            background-color: #fff;
-            padding: 40px 0;
-            text-align: center;
         }
         .highlighted-row {
             background-color: #e6f7ff;
-        .pharmacy-logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
         }
         #autocomplete-results {
             position: absolute;
@@ -160,33 +91,19 @@
             max-height: 150px;
             overflow-y: auto;
             background-color: white;
-        .pharmacy-logo {
-            max-width: 100px;
-            opacity: 0.6;
         }
         .autocomplete-item {
             padding: 10px;
             cursor: pointer;
             background-color: #fff;
             border-bottom: 1px solid #d4d4d4;
-        .how-to-use {
-            background-color: #f8f9fa;
-            padding: 60px 0;
         }
         .autocomplete-item:hover {
             background-color: #e9e9e9;
-        .steps {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 30px;
         }
         .ingredient {
             font-weight: bold;
             color: #4CAF50;
-        .step {
-            flex-basis: calc(33.333% - 30px);
-            text-align: center;
         }
         @media (max-width: 767px) {
             .container {
@@ -211,9 +128,6 @@
             th, td {
                 padding: 6px;
             }
-        .step-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
         }
     </style>
     <!-- Google Analytics 코드 -->
@@ -222,7 +136,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-YB7ZSK64ED');
     </script>
 </head>
@@ -238,76 +151,11 @@
                 <input type="text" id="search-input" placeholder="제품코드 또는 제품명 입력">
                 <button id="search-button">검색</button>
                 <div id="autocomplete-results"></div>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">쌍둥이약</div>
-                <nav class="menu">
-                    <a href="#">홈</a>
-                    <a href="#">앱 다운로드</a>
-                    <a href="#">사용법</a>
-                    <a href="#">Contact</a>
-                    <a href="#">문의하기</a>
-                </nav>
             </div>
             <div id="results"></div>
             <canvas id="priceChart"></canvas>
         </div>
     </div>
-    </header>
-
-    <main>
-        <section class="search-section">
-            <div class="container">
-                <h1 id="title">똑같은 약 싸게 사자 "쌍둥이약"</h1>
-                <p>의약품을 검색해보세요!<br>
-                같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)</p>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="의약품을 검색해보세요...">
-                    <button class="search-button">검색</button>
-                </div>
-                <div id="autocomplete-results"></div>
-                <div id="results"></div>
-            </div>
-        </section>
-
-        <section class="pharmacy-list">
-            <div class="container">
-                <h2>35,000+ 약국에서 이용 가능</h2>
-                <div class="pharmacy-logos">
-                    <img src="placeholder-logo1.png" alt="Pharmacy 1" class="pharmacy-logo">
-                    <img src="placeholder-logo2.png" alt="Pharmacy 2" class="pharmacy-logo">
-                    <img src="placeholder-logo3.png" alt="Pharmacy 3" class="pharmacy-logo">
-                    <img src="placeholder-logo4.png" alt="Pharmacy 4" class="pharmacy-logo">
-                    <img src="placeholder-logo5.png" alt="Pharmacy 5" class="pharmacy-logo">
-                </div>
-            </div>
-        </section>
-
-        <section class="how-to-use">
-            <div class="container">
-                <h2>쌍둥이약 이용 방법</h2>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-icon">🔍</div>
-                        <h3>1. 처방전 검색</h3>
-                        <p>귀하의 처방전에 대한 할인 가격을 확인하세요.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-icon">🎫</div>
-                        <h3>2. 무료 쿠폰 선택</h3>
-                        <p>주변 참여 약국에서 사용할 수 있습니다.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-icon">💊</div>
-                        <h3>3. 약사에게 보여주기</h3>
-                        <p>할인을 적용하기 위한 코드를 입력할 것입니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
     <script>
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
@@ -317,7 +165,6 @@
         const infoText = document.getElementById('info-text');
         let medicines = [];
         let chart = null;
-
         fetch('data/medicines.json')
             .then(response => response.json())
             .then(data => {
@@ -326,18 +173,12 @@
             .catch(error => {
                 console.error('Error loading JSON data:', error);
             });
-
         searchButton.addEventListener('click', search);
         searchInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 search();
             }
-        // Basic JavaScript for search functionality
-        document.querySelector('.search-button').addEventListener('click', function() {
-            var searchTerm = document.querySelector('.search-input').value;
-            document.getElementById('results').innerHTML = '검색 결과: ' + searchTerm + '에 대한 결과를 찾고 있습니다...';
         });
-
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
@@ -347,7 +188,6 @@
                 chart = null;
             }
         });
-
         function search() {
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
@@ -355,28 +195,23 @@
                 infoText.innerHTML = '의약품을 검색해보세요!<br>같은 약인데 <span style="color: red; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)';
                 return;
             }
-
             const matchingMedicines = medicines.filter(medicine => 
                 medicine['제품코드'].toLowerCase().includes(query) || 
                 medicine['제품명'].toLowerCase().includes(query) ||
                 extractIngredient(medicine['제품명']).includes(query)
             );
-
             if (matchingMedicines.length === 0) {
                 resultsDiv.innerHTML = '<p>검색 결과가 없습니다.</p>';
                 infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
                 return;
             }
-
             const groups = [...new Set(matchingMedicines.map(medicine => medicine['Group']))];
             const results = medicines.filter(medicine => groups.includes(medicine['Group']));
-
             displayResults(results, query);
         }
-
         function displayResults(results, query) {
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
-
+            
             results.sort((a, b) => {
                 const aHighlighted = a['제품코드'].toLowerCase().includes(query) || 
                                      a['제품명'].toLowerCase().includes(query) ||
@@ -386,21 +221,17 @@
                                      extractIngredient(b['제품명']).includes(query);
                 return bHighlighted - aHighlighted;
             });
-
             for (const medicine of results) {
                 const isHighlighted = medicine['제품코드'].toLowerCase().includes(query) || 
                                       medicine['제품명'].toLowerCase().includes(query) ||
                                       extractIngredient(medicine['제품명']).includes(query);
                 html += generateTableRow(medicine, isHighlighted);
             }
-
             html += '</table>';
             resultsDiv.innerHTML = html;
             infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
-
             renderChart(results);
         }
-
         function generateTableRow(medicine, isHighlighted) {
             return `
                 <tr class="${isHighlighted ? 'highlighted-row' : ''}" onclick="handleRowClick('${medicine['제품명']}')">
@@ -411,7 +242,6 @@
                 </tr>
             `;
         }
-
         function handleRowClick(productName) {
             const searchQuery = productName.split('_')[0];
             const userConfirmed = confirm('의약품 정보 사이트로 이동합니다. 계속 하시겠습니까?');
@@ -419,26 +249,22 @@
                 window.location.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`;
             }
         }
-
         searchButton.addEventListener('click', function() {
             gtag('event', 'search', {
                 'event_category': 'engagement',
                 'event_label': 'search_button_click'
             });
         });
-
         function extractIngredient(productName) {
             const match = productName.match(/\(([^)]+)\)/);
             return match ? match[1].toLowerCase() : '';
         }
-
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             if (query.length < 2) {
                 autocompleteResults.innerHTML = '';
                 return;
             }
-
             const matches = medicines.filter(medicine => {
                 const ingredient = extractIngredient(medicine['제품명']);
                 return ingredient.includes(query) ||
@@ -453,10 +279,13 @@
                 if (!aMatch && bMatch) return 1;
                 return 0;
             }).slice(0, 5);  // Limit to 5 results
-
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => {
                     const ingredient = extractIngredient(medicine['제품명']);
+                    const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
+                        `(<span style="font-weight: bold;">${p1}</span>)`
+                    );
+                    return `<div class="autocomplete-item">${highlightedName}</div>`;
                     let displayText = medicine['제품명'];
                     if (ingredient.includes(query)) {
                         displayText = `<span class="ingredient">${ingredient}</span> (${medicine['제품명']})`;
@@ -474,6 +303,7 @@
 
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('autocomplete-item')) {
+                searchInput.value = e.target.textContent;
                 const productName = e.target.getAttribute('data-product-name');
                 searchInput.value = productName;
                 autocompleteResults.innerHTML = '';
@@ -482,18 +312,15 @@
                 autocompleteResults.innerHTML = '';
             }
         });
-
         function renderChart(data) {
             if (chart) {
                 chart.destroy();
             }
-
             const ctx = document.getElementById('priceChart').getContext('2d');
             const chartData = data.map(item => ({
                 label: item['제품명'].length > 10 ? item['제품명'].substring(0, 10) + '...' : item['제품명'],
                 price: parseFloat(item['상한금액'])
             }));
-
             chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
