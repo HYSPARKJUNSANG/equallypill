@@ -204,6 +204,16 @@
         const infoText = document.getElementById('info-text');
         let medicines = [];
         let chart = null;
+
+        // 임시 데이터 (실제 환경에서는 이 부분을 제거하고 실제 JSON 파일을 사용해야 합니다)
+        medicines = [
+            { "제품코드": "A1234", "제품명": "아스피린(Aspirin)", "업체명": "약품회사A", "상한금액": "1000", "Group": "해열제" },
+            { "제품코드": "B5678", "제품명": "이부프로펜(Ibuprofen)", "업체명": "약품회사B", "상한금액": "1500", "Group": "해열제" },
+            { "제품코드": "C9012", "제품명": "파라세타몰(Paracetamol)", "업체명": "약품회사C", "상한금액": "800", "Group": "해열제" }
+        ];
+
+        // 실제 환경에서는 이 fetch 함수를 사용하세요
+        /*
         fetch('data/medicines.json')
             .then(response => response.json())
             .then(data => {
@@ -212,12 +222,15 @@
             .catch(error => {
                 console.error('Error loading JSON data:', error);
             });
+        */
+
         searchButton.addEventListener('click', search);
         searchInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 search();
             }
         });
+
         titleElement.addEventListener('click', function() {
             searchInput.value = '';
             resultsDiv.innerHTML = '';
@@ -227,6 +240,7 @@
                 chart = null;
             }
         });
+
         function search() {
             const query = searchInput.value.trim().toLowerCase();
             if (query.length === 0) {
@@ -248,6 +262,7 @@
             const results = medicines.filter(medicine => groups.includes(medicine['Group']));
             displayResults(results, query);
         }
+
         function displayResults(results, query) {
             let html = '<table><tr><th>제품코드</th><th>제품명</th><th>업체명</th><th>상한금액 (1알)</th></tr>';
             
@@ -271,6 +286,7 @@
             infoText.innerHTML = '의약품 클릭 시 해당 의약품 정보 사이트로 이동합니다.<br>해당 화면을 약사님에게 보여드린 후, 저렴한 약을 처방받으면 됩니다.';
             renderChart(results);
         }
+
         function generateTableRow(medicine, isHighlighted) {
             return `
                 <tr class="${isHighlighted ? 'highlighted-row' : ''}" onclick="handleRowClick('${medicine['제품명']}')">
@@ -281,6 +297,7 @@
                 </tr>
             `;
         }
+
         function handleRowClick(productName) {
             const searchQuery = productName.split('_')[0];
             const userConfirmed = confirm('의약품 정보 사이트로 이동합니다. 계속 하시겠습니까?');
@@ -288,16 +305,19 @@
                 window.location.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`;
             }
         }
+
         searchButton.addEventListener('click', function() {
             gtag('event', 'search', {
                 'event_category': 'engagement',
                 'event_label': 'search_button_click'
             });
         });
+
         function extractIngredient(productName) {
             const match = productName.match(/\(([^)]+)\)/);
             return match ? match[1].toLowerCase() : '';
         }
+
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             if (query.length < 2) {
@@ -321,28 +341,4 @@
             if (matches.length > 0) {
                 autocompleteResults.innerHTML = matches.map(medicine => {
                     const ingredient = extractIngredient(medicine['제품명']);
-                    const highlightedName = medicine['제품명'].replace(/\(([^)]+)\)/, (match, p1) => 
-                        `(<span style="font-weight: bold;">${p1}</span>)`
-                    );
-                    return `<div class="autocomplete-item" data-product-name="${medicine['제품명']}">${highlightedName}</div>`;
-                }).join('');
-            } else {
-                autocompleteResults.innerHTML = '';
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('autocomplete-item')) {
-                const productName = e.target.getAttribute('data-product-name');
-                searchInput.value = productName;
-                autocompleteResults.innerHTML = '';
-                search();
-            } else if (e.target !== searchInput) {
-                autocompleteResults.innerHTML = '';
-            }
-        });
-        function renderChart(data) {
-            if (chart) {
-                chart.destroy();
-            }
-            const
+                    const highlightedName = medicine['제품명'].replace(/\(([^)]+
