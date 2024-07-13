@@ -4,11 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>쌍둥이약 - 똑같은 약 싸게 사자</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #f8f8f8;
+            padding: 1rem 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header-content a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        .search-section {
+            background-color: #0066cc;
+            padding: 2rem 0;
+            text-align: center;
+            color: white;
+        }
+        .search-container {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .pharmacy-list {
+            padding: 2rem 0;
+            text-align: center;
+        }
+        .pharmacy-logos {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .pharmacy-logo {
+            width: 100px;
+            margin: 10px;
+        }
+        .how-to-use {
+            background-color: #0066cc;
+            padding: 2rem 0;
+            color: white;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .step {
+            flex-basis: 30%;
+            text-align: center;
+        }
+        .step-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- 헤더 섹션 -->
-    <header>
+    <header class="header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">쌍둥이약</div>
@@ -23,23 +98,19 @@
         </div>
     </header>
 
-    <!-- 메인 컨텐츠 -->
-    <main>
-        <!-- 검색 섹션 -->
-        <section class="search-section">
+    <main role="main">
+        <section class="section search-section">
             <div class="container">
                 <h1>똑같은 약 싸게 사자 "쌍둥이약"</h1>
-                <p>의약품을 검색해보세요! 같은 약인데 <span class="highlight">비싸게</span> 사고 있는 경우가 많답니다 :)</p>
+                <p>의약품을 검색해보세요! 같은 약인데 <span style="color: #ffff00; font-weight: bold;">비싸게</span> 사고 있는 경우가 많답니다 :)</p>
                 <div class="search-container">
                     <input type="text" placeholder="검색" id="search-input">
-                    <div id="autocomplete-results"></div>
                 </div>
                 <div id="results"></div>
             </div>
         </section>
 
-        <!-- 약국 리스트 섹션 -->
-        <section class="pharmacy-list">
+        <section class="section pharmacy-list">
             <div class="container">
                 <h2>35,000+ 약국에서 이용 가능</h2>
                 <div class="pharmacy-logos">
@@ -52,8 +123,7 @@
             </div>
         </section>
 
-        <!-- 이용 방법 섹션 -->
-        <section class="how-to-use">
+        <section class="section how-to-use">
             <div class="container">
                 <h2>쌍둥이약 이용 방법</h2>
                 <div class="steps">
@@ -77,6 +147,19 @@
         </section>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        // 간단한 검색 기능 구현
+        const searchInput = document.getElementById('search-input');
+        const resultsDiv = document.getElementById('results');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            if (searchTerm.length > 0) {
+                resultsDiv.innerHTML = `"${searchTerm}" 검색 결과 표시`;
+            } else {
+                resultsDiv.innerHTML = '';
+            }
+        });
+    </script>
 </body>
 </html>
